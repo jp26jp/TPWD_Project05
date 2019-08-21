@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField
+from wtforms import StringField, DateField, IntegerField, TextAreaField
 from wtforms.validators import (DataRequired, ValidationError)
 
 from models import Entry
@@ -22,15 +22,15 @@ class RegisterForm(FlaskForm):
         'Date',
         validators=[DataRequired()]
     )
-    time_spent = DateField(
-        'Time spent',
+    time_spent = IntegerField(
+        'Time Spent',
         validators=[DataRequired()]
     )
-    learned = DateField(
-        'Learned',
+    learned = TextAreaField(
+        'What I Learned',
         validators=[DataRequired()]
     )
-    resources = DateField(
-        'Resources',
+    resources = TextAreaField(
+        'Resources to Remember',
         validators=[DataRequired()]
     )

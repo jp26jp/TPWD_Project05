@@ -37,36 +37,34 @@ def listing():
     Title - should be a linked title, clicking it routes user to the detail page for the clicked entry.
     Date - Each entry should have a date created listed somewhere beneath the title.
     """
-    return render_template("index.html")
+    entries = models.Entry.select().limit(100)
+    return render_template('index.html', entries=entries)
 
 
-# @app.route("/entries/<id>")
-# def detail(id):
-#     """
-#     This view should render a detail page of a journal entry, it should display the following fields on the page:
-#     Title
-#     Date
-#     Time Spent
-#     What You Learned
-#     Resources to Remember.
-#     NOTE: This page should contain a link/button that takes the user to the Edit route for the Entry with this <id>.
-#     """
-#     return render_template("new.html")
+@app.route("/entries/<slug>")
+def detail(slug):
+    """
+    This view should render a detail page of a journal entry, it should display the following fields on the page:
+    Title
+    Date
+    Time Spent
+    What You Learned
+    Resources to Remember.
+    NOTE: This page should contain a link/button that takes the user to the Edit route for the Entry with this <id>.
+    """
+    entry = models.Entry.get(models.Entry.slug == slug)
+    return render_template("detail.html", entry=entry)
 
 
-@app.route("/new.html", methods=["GET", "POST"])
+@app.route("/new", methods=("GET", "POST"))
 def add():
     """
-    Create an add view with the route /entries/new that allows the user to add a journal entry with the following fields:
-    Title - string
-    Date - date
-    Time Spent - integer
-    What You Learned - text
-    Resources to Remember - text
-    The page should present a new blank Entry form that allows the user to Create a new entry that will be stored in the database.
+    Allows the user to add a journal entry with the following fields: Title, Date, Time Spent, What You Learned, and
+    Resources to Remember
     """
     form = forms.RegisterForm()
     if form.validate_on_submit():
+        flash("Entry added!", "success")
         models.Entry.create_entry(
             title=form.title.data,
             date=form.date.data,
@@ -100,7 +98,7 @@ def delete(id):
 
 if __name__ == '__main__':
     models.initialize()
-    models.Entry.create_entry(
-        title="A cool title", date="05/09/1991", time_spent="10", learned="So many things", resources="Tons of them"
-    )
+    # models.Entry.create_entry(
+    #     title="A cool title", date="05/09/1991", time_spent="10", learned="So many things", resources="Tons of them"
+    # )
     app.run(debug=DEBUG, host=HOST, port=PORT)
