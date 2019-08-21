@@ -5,7 +5,7 @@ from wtforms.validators import (DataRequired, ValidationError)
 from models import Entry
 
 
-def title_exists(form, field):
+def title_exists(field):
     if Entry.select().where(Entry.title == field.data).exists():
         raise ValidationError('An entry with that title already exists.')
 

@@ -1,18 +1,23 @@
-{% macro render_field(field) %}
+{% macro render_field(field, value="", form="", index="") %}
+    {% if index < 6 %}
     <div class="field">
+        <label for="{{ field.id }}">{{field.label.text}}</label>
         {% if field.errors %}
             {% for error in field.errors %}
                 <div class="notification error">{{ error }}</div>
             {% endfor %}
         {% endif %}
-        <!-- TODO: Find if there is a better way to do this -->
         {%- set type = "" -%}
         {%- if field.type == "StringField" %}{% set type = "text" %}
         {%- elif field.type == "DateField" %}{% set type = "date" %}
         {%- elif field.type == "IntegerField" %}{% set type = "number" %}
         {%- elif field.type == "TextAreaField" %}{% set type = "textarea" %}
         {%- endif %}
-        <!-- TODO: Find why CSRF Token is appearing twice -->
-        {{ field(type=type, placeholder=field.label.text) }}
+        {% if type == "textarea" %}
+            <textarea id="{{ field.id }}" name="{{ field.id }}" required type="textarea" spellcheck>{{value}}</textarea>
+        {% else %}
+            {{ field(value=value, type=type) }}
+        {% endif %}
     </div>
+    {% endif %}
 {% endmacro %}
