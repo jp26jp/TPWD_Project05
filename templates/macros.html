@@ -7,12 +7,12 @@
                 <div class="notification error">{{ error }}</div>
             {% endfor %}
         {% endif %}
-        {%- set type = "" -%}
-        {%- if field.type == "StringField" %}{% set type = "text" %}
-        {%- elif field.type == "DateField" %}{% set type = "date" %}
-        {%- elif field.type == "IntegerField" %}{% set type = "number" %}
-        {%- elif field.type == "TextAreaField" %}{% set type = "textarea" %}
-        {%- endif %}
+        {% set type = "" %}
+        {% if field.type == "StringField" %}{% set type = "text" %}
+        {% elif field.type == "DateField" %}{% set type = "date" %}
+        {% elif field.type == "IntegerField" %}{% set type = "number" %}
+        {% elif field.type == "TextAreaField" %}{% set type = "textarea" %}
+        {% endif %}
         {% if type == "textarea" %}
             <textarea id="{{ field.id }}" name="{{ field.id }}" required type="textarea" spellcheck>{{value}}</textarea>
         {% else %}
