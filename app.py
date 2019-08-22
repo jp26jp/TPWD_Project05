@@ -1,10 +1,11 @@
-from flask import Flask, g, render_template, redirect, url_for, request, make_response, flash
-from peewee import *
-
-import json
 import os
 import models
 import forms
+
+from flask import Flask, g, render_template, redirect, url_for, request, make_response, flash
+from peewee import *
+from slugify import slugify
+from models import Entry
 
 DEBUG = True
 PORT = 8080
@@ -28,8 +29,8 @@ def after_requst(response):
     return response
 
 
-@app.route("/")
 @app.route("/entries")
+@app.route("/")
 def listing():
     """
     Renders a listing page of all of the journal entries
@@ -46,7 +47,7 @@ def add():
     form = forms.RegisterForm()
     if form.validate_on_submit():
         flash("Entry added!", "success")
-        entry = models.Entry.create_entry(
+        entry = Entry.create_entry(
             title=form.title.data,
             date=form.date.data,
             time_spent=form.time_spent.data,
@@ -62,35 +63,36 @@ def detail(slug):
     """
     Renders the detail page of a journal entry with buttons that allow the user to edit the entry
     """
-    entry = models.Entry.get(models.Entry.slug == slug)
+    entry = Entry.get(Entry.slug == slug)
     return render_template("detail.html", entry=entry)
 
 
-@app.route("/entries/<slug>/edit", methods=("GET", "PUT"))
+@app.route("/entries/<slug>/edit", methods=("GET", "POST"))
 def edit(slug):
     """
-    Allows the user to edit the journal entry with a slug of the <slug> passed in.
+    Allows the user to edit the journal entry with a slug of the <slug> passed in
     """
-    entry = models.Entry.get(models.Entry.slug == slug)
+    entry = Entry.get(Entry.slug == slug)
     form = forms.RegisterForm()
     if form.validate_on_submit():
         flash("Entry updated!", "success")
-        models.Entry.create_entry(
-            title=form.title.data,
-            date=form.date.data,
-            time_spent=form.time_spent.data,
-            learned=form.learned.data,
-            resources=form.resources.data
-        )
+        entry.title = form.title.data
+        entry.slug = slugify(form.title.data)
+        entry.date = form.date.data
+        entry.time_spent = form.time_spent.data
+        entry.learned = form.learned.data
+        entry.resources = form.resources.data
+        entry.save()
+        return redirect(url_for("detail", slug=entry.slug))
     return render_template("edit.html", form=form, entry=entry)
 
 
 @app.route("/entries/<slug>/delete")
 def delete(slug):
     """The Delete route"""
-    entry = models.Entry.get(models.Entry.slug == slug)
+    entry = Entry.get(Entry.slug == slug)
     entry.delete_instance()
-    return redirect("/")
+    return redirect(url_for("listing"))
 
 
 if __name__ == '__main__':

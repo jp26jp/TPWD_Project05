@@ -23,11 +23,8 @@ class Entry(Model):
 
     @classmethod
     def create_entry(cls, title, date, time_spent, learned, resources):
-        try:
-            with DATABASE.transaction():
-                return cls.create(title=title, date=date, time_spent=time_spent, learned=learned, resources=resources)
-        except IntegrityError:
-            raise ValueError("Title already exists")
+        with DATABASE.transaction():
+            return cls.create(title=title, date=date, time_spent=time_spent, learned=learned, resources=resources)
 
 
 def initialize():

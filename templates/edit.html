@@ -5,7 +5,7 @@
 <div class="edit-entry">
     <h2>Edit Entry</h2>
     {% set data = [entry.title, entry.date, entry.time_spent, entry.learned, entry.resources] %}
-    <form method="PUT" action="">
+    <form method="POST" action="">
         {{ form.hidden_tag() }}
         {% for field in form %}
         {{ render_field(field=field, value=data[loop.index - 1], form=form, index=loop.index) }}
