@@ -2,10 +2,8 @@ import os
 import models
 import forms
 
-from flask import Flask, g, render_template, redirect, url_for, request, make_response, flash
-from peewee import *
+from flask import Flask, g, render_template, redirect, url_for, flash
 from slugify import slugify
-from models import Entry
 
 DEBUG = True
 PORT = 8080
@@ -47,7 +45,7 @@ def add():
     form = forms.RegisterForm()
     if form.validate_on_submit():
         flash("Entry added!", "success")
-        entry = Entry.create_entry(
+        entry = models.Entry.create_entry(
             title=form.title.data,
             date=form.date.data,
             time_spent=form.time_spent.data,
@@ -63,7 +61,7 @@ def detail(slug):
     """
     Renders the detail page of a journal entry with buttons that allow the user to edit the entry
     """
-    entry = Entry.get(Entry.slug == slug)
+    entry = models.Entry.get(models.Entry.slug == slug)
     return render_template("detail.html", entry=entry)
 
 
@@ -72,7 +70,7 @@ def edit(slug):
     """
     Allows the user to edit the journal entry with a slug of the <slug> passed in
     """
-    entry = Entry.get(Entry.slug == slug)
+    entry = models.Entry.get(models.Entry.slug == slug)
     form = forms.RegisterForm()
     if form.validate_on_submit():
         flash("Entry updated!", "success")
@@ -89,8 +87,8 @@ def edit(slug):
 
 @app.route("/entries/<slug>/delete")
 def delete(slug):
-    """The Delete route"""
-    entry = Entry.get(Entry.slug == slug)
+    """Deletes the entry passed in the <slug>"""
+    entry = models.Entry.get(models.Entry.slug == slug)
     entry.delete_instance()
     return redirect(url_for("listing"))
 
