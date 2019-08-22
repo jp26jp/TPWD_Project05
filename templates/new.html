@@ -7,11 +7,11 @@
     <form method="POST" action="">
         <!-- TODO: Find if there is a better way to do this -->
         {{ form.hidden_tag() }}
-        {%- for field in form %}
+        {% for field in form %}
         {{ render_field(field, index=loop.index) }}
-        {% endfor -%}
+        {% endfor %}
         <input type="submit" value="Publish Entry" class="button">
-        <a href="#" class="button button-secondary">Cancel</a>
+        <a href="/" class="button button-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

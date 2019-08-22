@@ -15,12 +15,9 @@ class Entry(Model):
     class Meta:
         database = DATABASE
 
-    def get_entries(self):
-        return Entry.select()
-
     # credit: https://stackoverflow.com/a/32333011/4373927
     def __init__(self, *args, **kwargs):
-        if not 'slug' in kwargs:
+        if 'slug' not in kwargs:
             kwargs['slug'] = slugify(kwargs.get('title', ''))
         super().__init__(*args, **kwargs)
 
@@ -28,7 +25,7 @@ class Entry(Model):
     def create_entry(cls, title, date, time_spent, learned, resources):
         try:
             with DATABASE.transaction():
-                cls.create(title=title, date=date, time_spent=time_spent, learned=learned, resources=resources)
+                return cls.create(title=title, date=date, time_spent=time_spent, learned=learned, resources=resources)
         except IntegrityError:
             raise ValueError("Title already exists")
 
